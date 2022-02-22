@@ -26,7 +26,7 @@ public class Crypto {
     private Integer rank;
     private Double price_usd;
     private Double price_btc;
-    @OneToMany(mappedBy = "crypto", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "crypto", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<User> userSet;
 
     public Crypto(Long crypto_id, String symbol, String name, String nameid, Integer rank, Double price_usd, Double price_btc) {

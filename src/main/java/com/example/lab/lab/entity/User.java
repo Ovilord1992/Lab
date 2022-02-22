@@ -10,19 +10,30 @@ import java.util.Set;
 @Entity
 @Table(name = "users")
 @RequiredArgsConstructor
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NonNull
-    private String  userName;
-    private Double price;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JsonIgnore
-    private Crypto crypto;
+    @NonNull
+    private String userName;
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "user_prices",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "price_id"))
+    private Set<CryptoUserPrice> cryptoUserPrices;
+
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_crypto",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "crypto_id"))
+    private Set<Crypto> crypto;
 
 }
