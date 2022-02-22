@@ -16,8 +16,9 @@ public class CryptoUserPrice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToMany(mappedBy = "cryptoUserPrices", cascade = CascadeType.ALL)
-    private Set<User> users;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
     private Double price;
     private String symbol;
 }

@@ -2,7 +2,6 @@ package com.example.lab.lab.services;
 import com.example.lab.lab.entity.Crypto;
 import com.example.lab.lab.entity.CryptoUserPrice;
 import com.example.lab.lab.entity.User;
-import com.example.lab.lab.repository.CryptoPricesRepo;
 import com.example.lab.lab.repository.CryptoRepo;
 import com.example.lab.lab.repository.UserRepo;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +18,6 @@ public class UserServices {
     final private UserRepo userRepo;
     final private CryptoRepo cryptoRepo;
     final private CryptoService cryptoService;
-    final private CryptoPricesRepo cryptoUserPrice;
 
     public void userRegistryOnSymbol(String name, String symbol){
         if (!cryptoRepo.existsBySymbol(symbol)){
@@ -34,12 +32,12 @@ public class UserServices {
             Set<Crypto> cryptos = user.getCrypto();
             cryptos.add(crypto);
             user.setCrypto(cryptos);
-            boolean cryptoUserPrices = cryptoUserPrice.existBySymbolAndUsers(symbol, user);
             CryptoUserPrice cryptoUserPrice = new CryptoUserPrice();
             cryptoUserPrice.setPrice(crypto.getPrice_usd());
             cryptoUserPrice.setSymbol(crypto.getSymbol());
+            cryptoUserPrice.setUser(user);
+            Set<CryptoUserPrice> cryptoUserPrices = user.getCryptoUserPrices();
             cryptoUserPrices.add(cryptoUserPrice);
-            user.setCryptoUserPrices(cryptoUserPrices);
             userRepo.save(user);
         } else {
             User user = new User();
@@ -51,6 +49,7 @@ public class UserServices {
             Set<CryptoUserPrice> cryptoUserPrices = new HashSet<>();
             cryptoUserPrice.setPrice(crypto.getPrice_usd());
             cryptoUserPrice.setSymbol(crypto.getSymbol());
+            cryptoUserPrice.setUser(user);
             cryptoUserPrices.add(cryptoUserPrice);
             user.setCryptoUserPrices(cryptoUserPrices);
             userRepo.save(user);

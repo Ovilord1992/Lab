@@ -22,11 +22,7 @@ public class User {
     @NonNull
     private String userName;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "user_prices",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "price_id"))
+    @OneToMany(mappedBy = "user",fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<CryptoUserPrice> cryptoUserPrices;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
