@@ -8,6 +8,7 @@ import com.example.lab.lab.services.modelMapper.CryptoModelMapper;
 import com.google.gson.Gson;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,31 +23,31 @@ import org.slf4j.Logger;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class CryptoService {
-    Logger logger = LoggerFactory.getLogger(CryptoService.class);
-
-    @Autowired
-    private CryptoRepo cryptoRepo;
+    private final CryptoRepo cryptoRepo;
+    private final UserMessager userMessager;
 
     public List<CryptoDto> getAllCrypto(){
-        List<Crypto> cryptos =  cryptoRepo.findAll();
-        return cryptos.stream().map(CryptoModelMapper::cryptoMapperToDto).collect(Collectors.toList());
+        return cryptoRepo.findAll()
+                .stream()
+                .map(CryptoModelMapper::cryptoMapperToDto)
+                .collect(Collectors.toList());
     }
 
     public CryptoDto getCryptoId(Long id){
-        Crypto crypto = cryptoRepo.findByCryptoid(id);
-        return CryptoModelMapper.cryptoMapperToDto(crypto);
+        return CryptoModelMapper.cryptoMapperToDto(cryptoRepo.findByCryptoid(id));
     }
 
-    public void saveCrypto(CryptoDto cryptoDto){
+    public void saveCrypto(CryptoDto cryptoDto) {
         if (cryptoRepo.existsByName(cryptoDto.getName())){
             Crypto c = cryptoRepo.findByName(cryptoDto.getName());
-            c.setPrice_btc(cryptoDto.getPrice_btc());
-            c.setPrice_usd(cryptoDto.getPrice_usd());
+                c.setPrice_btc(cryptoDto.getPrice_btc());
+                c.setPrice_usd(cryptoDto.getPrice_usd());
             cryptoRepo.save(c);
+            userMessager.notify(c);
         }else{
-            Crypto crypto = CryptoModelMapper.cryptoMapperToEntity(cryptoDto);
-            cryptoRepo.save(crypto);
+            cryptoRepo.save(CryptoModelMapper.cryptoMapperToEntity(cryptoDto));
         }
 
     }

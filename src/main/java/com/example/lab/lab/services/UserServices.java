@@ -17,41 +17,37 @@ public class UserServices {
 
     final private UserRepo userRepo;
     final private CryptoRepo cryptoRepo;
-    final private CryptoService cryptoService;
 
     public void userRegistryOnSymbol(String name, String symbol){
         if (!cryptoRepo.existsBySymbol(symbol)){
-            ResponseEntity
-                    .badRequest()
-                    .body("Error: symbol is exist");
-            return;
+            throw new RuntimeException("Error: symbol is exist");
         }
         Crypto crypto = cryptoRepo.findBySymbol(symbol);
         if (userRepo.existsByUserName(name)){
             User user = userRepo.findByUserName(name);
             Set<Crypto> cryptos = user.getCrypto();
-            cryptos.add(crypto);
-            user.setCrypto(cryptos);
+                cryptos.add(crypto);
+                user.setCrypto(cryptos);
             CryptoUserPrice cryptoUserPrice = new CryptoUserPrice();
-            cryptoUserPrice.setPrice(crypto.getPrice_usd());
-            cryptoUserPrice.setSymbol(crypto.getSymbol());
-            cryptoUserPrice.setUser(user);
+                cryptoUserPrice.setPrice(crypto.getPrice_usd());
+                cryptoUserPrice.setSymbol(crypto.getSymbol());
+                cryptoUserPrice.setUser(user);
             Set<CryptoUserPrice> cryptoUserPrices = user.getCryptoUserPrices();
-            cryptoUserPrices.add(cryptoUserPrice);
+                cryptoUserPrices.add(cryptoUserPrice);
             userRepo.save(user);
         } else {
             User user = new User();
             Set<Crypto> cryptos = new HashSet<>();
-            cryptos.add(crypto);
-            user.setCrypto(cryptos);
-            user.setUserName(name);
+                cryptos.add(crypto);
+                user.setCrypto(cryptos);
+                user.setUserName(name);
             CryptoUserPrice cryptoUserPrice = new CryptoUserPrice();
             Set<CryptoUserPrice> cryptoUserPrices = new HashSet<>();
-            cryptoUserPrice.setPrice(crypto.getPrice_usd());
-            cryptoUserPrice.setSymbol(crypto.getSymbol());
-            cryptoUserPrice.setUser(user);
-            cryptoUserPrices.add(cryptoUserPrice);
-            user.setCryptoUserPrices(cryptoUserPrices);
+                cryptoUserPrice.setPrice(crypto.getPrice_usd());
+                cryptoUserPrice.setSymbol(crypto.getSymbol());
+                cryptoUserPrice.setUser(user);
+                cryptoUserPrices.add(cryptoUserPrice);
+                user.setCryptoUserPrices(cryptoUserPrices);
             userRepo.save(user);
         }
     }

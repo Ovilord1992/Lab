@@ -13,6 +13,5 @@ public interface CryptoRepo extends JpaRepository<Crypto, Long> {
     Crypto findBySymbol(String symbol);
 
     Boolean existsByName(String name);
-    Boolean existsByCryptoid(Long id);
     Boolean existsBySymbol(String symbol);
 }
